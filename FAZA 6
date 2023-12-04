@@ -1,0 +1,1009 @@
+#include<iostream>
+#include <vector>
+#include <fstream>
+#include<string>
+using namespace std;
+//BAZA SPORTIVA
+
+//Prima clasa
+class Stadion {
+private:
+    const int id;
+    string nume;
+    int intrariStadion;
+    int capacitate;
+    string* meciuri;
+    int numarMeciuri;
+    static int dimensiunileterenului;
+public:
+    /*static int getDimensiunileTerenului() {
+        return Stadion::dimensiunileterenului;
+    }
+    static void setDimensiunileTerenului(int dimensiuni) {
+        if (dimensiuni > 0) {
+            Stadion::dimensiunileterenului = dimensiuni;
+        }
+    }*/
+
+    //Operatorul !
+    
+    bool operator!() const {
+        return nume.empty() || meciuri == NULL || numarMeciuri <= 0;
+    }
+
+    //CONSTRUCTOR 1
+    Stadion() : id(100) {
+        this->nume = "Maracana";
+        this->intrariStadion = 2;
+        this->capacitate = 200;
+        this->intrariStadion = 1;
+        this->numarMeciuri = 2;
+        this->meciuri = new string[this->numarMeciuri];
+        this->meciuri[0] = "meci 1, ";
+        this->meciuri[1] = "meci 2";
+
+    }
+
+    //CONSTRUCTOR 2
+    Stadion(int idNou, string nume) : id(idNou) {
+        this->nume = nume;
+         
+    }
+    //CONSTRUCTOR 3
+    Stadion(int id, string nume, int intrariStadion, int capacitate) : id(id) {
+        this->capacitate = capacitate;
+        this->nume = nume;
+        this->intrariStadion = intrariStadion;
+
+
+
+    }
+    //CONSTRUCTOR DE COPIERE
+    Stadion(const Stadion& other) : id(other.id) {
+        this->nume = other.nume;
+        this->intrariStadion = other.intrariStadion;
+        this->capacitate = other.capacitate;
+        this->numarMeciuri = other.numarMeciuri;
+
+        if (other.meciuri != NULL) {
+            this->meciuri = new string[this->numarMeciuri];
+            for (int i = 0; i < this->numarMeciuri; i++) {
+                this->meciuri[i] = other.meciuri[i];
+            }
+        }
+        else {
+            this->meciuri = NULL;
+        }
+    }
+    //DESTRUCTOR
+    ~Stadion() {
+        if (this->meciuri != NULL) {
+            delete[] this->meciuri;
+        }
+    }
+
+    void afisare() {
+        cout << "---------------------------------------------------------" << endl;
+        cout << "Id ul stadionului este:" << id << endl;
+        cout << "Numele stadionului este: " << nume << endl;
+        cout << "Dimensiunea stadionului este de " << Stadion::dimensiunileterenului << "m si are o capacitate de " << capacitate << endl;
+        cout << "Numarul intrarilor este de " << intrariStadion << endl;
+        cout << "Meciurile sunt:";
+        if (meciuri != NULL) {
+            for (int i = 0; i < numarMeciuri; i++) {
+                cout << meciuri[i] << " " << endl;
+            }
+        }
+        else {
+            cout << "-" << endl;
+        }
+        cout << "------------------------------------------------------" << endl;
+        
+    }
+    
+
+//GETT-ERI
+    const int getId()
+    {
+        return this->id;
+    }
+
+    string getNume()
+    {
+        return this->nume;
+    }
+    int getIntrariStadion()
+    {
+        return this->intrariStadion;
+    }
+    string* getMeciuri()
+    {
+        return this->meciuri;
+    }
+    int getNumarMeciuri()
+    {
+        return this->numarMeciuri;
+    }
+    static int getDimensiunileTerenului() 
+    {
+        return dimensiunileterenului;
+    }
+
+//SETTERI 
+    void setNume(const string& nume) {
+        this->nume = nume;
+    }
+
+    void setIntrariStadion(int intrari) {
+        this->intrariStadion = intrari;
+    }
+
+    void setCapacitate(int capacitate) {
+        this->capacitate = capacitate;
+    }
+
+    void setMeciuri(const string* meciuri, int numarMeciuri) {
+        if (this->meciuri != NULL) {
+            delete[] this->meciuri; // Eliberează memoria veche
+        }
+        this->numarMeciuri = numarMeciuri;
+        this->meciuri = new string[numarMeciuri];
+        for (int i = 0; i < numarMeciuri; i++) {
+            this->meciuri[i] = meciuri[i];
+        }
+    }
+
+    static void setDimensiunileTerenului(int dimensiuni) {
+        if (dimensiuni > 0) {
+            dimensiunileterenului = dimensiuni;
+        }
+    }
+    //functiile prietene
+    friend ostream& operator<<(ostream& ecran, const Stadion& c);
+    friend istream& operator>>(istream& tastatura, Stadion& c);
+
+    //supraincarcarea operatorului =
+    Stadion& operator=(const Stadion& other) {
+        if (this == &other) {
+            return *this; 
+        }
+
+        
+        this->nume = other.nume;
+        this->intrariStadion = other.intrariStadion;
+        this->capacitate = other.capacitate;
+
+        
+        if (this->meciuri != NULL) {
+            delete[] this->meciuri;
+            this->meciuri = NULL;
+        }
+        this->numarMeciuri = other.numarMeciuri;
+        if (other.meciuri != nullptr) {
+            this->meciuri = new string[this->numarMeciuri];
+            for (int i = 0; i < this->numarMeciuri; i++) {
+                this->meciuri[i] = other.meciuri[i];
+            }
+        }
+
+        return *this; 
+    }
+
+    //Operatorul ++
+    Stadion& operator++() {
+        this->capacitate++;
+        return *this;
+    }
+   
+    friend istream& operator>>(istream& tastatura, Stadion& c) {
+        cout << "Introduceti numele stadionului: ";
+        tastatura >> c.nume;
+
+        cout << "Introduceti numarul intrarilor: ";
+        tastatura >> c.intrariStadion;
+
+        cout << "Introduceti capacitatea stadionului: ";
+        tastatura >> c.capacitate;
+
+        cout << "Introduceti numarul de meciuri: ";
+        tastatura >> c.numarMeciuri;
+
+        if (c.meciuri != nullptr) {
+            delete[] c.meciuri;
+        }
+
+        c.meciuri = new string[c.numarMeciuri];
+
+        for (int i = 0; i < c.numarMeciuri; ++i) {
+            cout << "Introduceti meciul " << i + 1 << ": ";
+            tastatura >> c.meciuri[i];
+        }
+
+        return tastatura;
+    }
+
+    friend ostream& operator<<(ostream& ecran, const Stadion& c) {
+        ecran << "Numele stadionului: " << c.nume << endl;
+        ecran << "Numar intrari: " << c.intrariStadion << endl;
+        ecran << "Capacitate: " << c.capacitate << endl;
+        ecran << "Numar meciuri: " << c.numarMeciuri << endl;
+        ecran << "Meciuri: ";
+        for (int i = 0; i < c.numarMeciuri; ++i) {
+            ecran << c.meciuri[i] << " ";
+        }
+        ecran << endl;
+
+        return ecran;
+    }
+};
+
+
+ 
+
+int Stadion::dimensiunileterenului = 100 ;
+
+//CLASA A 2-A
+class SalaDeSport {
+private:
+    const int id;
+    string nume;
+    int nrAparate;
+    int* numarSportivi;
+    static int numarSaliDeSport;
+    friend void afisareSalaDeSport(const SalaDeSport& sala);
+
+public:
+  /*  static int getNumarSaliDeSport() {
+        return SalaDeSport::numarSaliDeSport;
+    }
+    static void setNumarSaliDeSport(int numar) {
+        if (numar > 0) {
+            SalaDeSport::numarSaliDeSport = numar;
+        }
+    }*/
+
+    //operator!
+    bool operator!() const {
+       
+        return numarSportivi == nullptr || nrAparate == 0;
+    }
+    //CONSTRUCTOR 1
+    SalaDeSport() : id(100) {
+        this->nume = "Fitness";
+        this->nrAparate = 3;
+        this->numarSportivi = NULL;
+    }
+
+    //CONSTRUCTOR 2
+    SalaDeSport(int idNou, string nume) : id(idNou) {
+        this->nume = nume;
+
+    }
+
+    //CONSTRUCTOR 3
+    SalaDeSport(int id, string nume, int nrAparate, int* numarSportivi) : id(id), nume(nume), nrAparate(nrAparate) {
+        this->nrAparate = nrAparate;
+        if (nrAparate != 0) {
+            this->numarSportivi = new int[nrAparate];
+            for (int i = 0; i < nrAparate; i++) {
+                this->numarSportivi[i] = numarSportivi[i];
+            }
+        }
+        else this->numarSportivi = NULL;
+
+    }
+    //CONSTRUCTOR DE COPIERE
+    SalaDeSport(const SalaDeSport& other) : id(other.id) {
+        this->nume = other.nume;
+        this->nrAparate = other.nrAparate;
+
+        if (other.numarSportivi != NULL) {
+            this->numarSportivi = new int[this->nrAparate];
+            for (int i = 0; i < this->nrAparate; i++) {
+                this->numarSportivi[i] = other.numarSportivi[i];
+            }
+        }
+        else {
+            this->numarSportivi = NULL;
+        }
+    }
+
+    //DESTRUCTOR
+    ~SalaDeSport() {
+        if (this->numarSportivi != NULL) {
+            delete[] this->numarSportivi;
+        }
+    }
+
+    void afisare() {
+        cout << "----------------------------------------------------------" << endl;
+        cout << "Id-ul salii este: " << id << ". " << endl;
+        cout << "Sala se numeste: " << nume << "." << endl;
+        cout << "Exista un numar de " << SalaDeSport::numarSaliDeSport << " sali de sport si " << nrAparate << " aparate. ";
+        if (numarSportivi != NULL) {
+            for (int i = 0; i < nrAparate; i++) {
+                cout << numarSportivi[i] << ",";
+            }
+        }
+        else {
+            cout << "Incap maxim 10 sportivi";
+        }
+        cout << endl;
+        cout << "--------------------------------------------------------" << endl;
+    }
+    //GETTERI
+    const int getId()
+    {
+        return this->id;
+    }
+
+    const string getNume()
+    {
+        return this->nume;
+    }
+    const int getNrAparate()
+    {
+        return this->nrAparate;
+    }
+    const int* getNumarSportivi()
+    {
+        return this->numarSportivi;
+    }
+    static int getNumarSaliDeSport()
+    {
+        return numarSaliDeSport;
+    }
+
+    //SETTERI
+
+    void setNume(const string& nume) {
+        this->nume = nume;
+    }
+
+    void setNrAparate(int nrAparate) {
+        this->nrAparate = nrAparate;
+    }
+
+    void setNumarSportivi(const int* numarSportivi, int nrAparate) {
+        if (this->numarSportivi != NULL) {
+            delete[] this->numarSportivi; // Eliberează memoria veche
+        }
+        this->nrAparate = nrAparate;
+        this->numarSportivi = new int[nrAparate];
+        for (int i = 0; i < nrAparate; i++) {
+            this->numarSportivi[i] = numarSportivi[i];
+        }
+    }
+
+    static void setNumarSaliDeSport(int numar) {
+        if (numar > 0) {
+            numarSaliDeSport = numar;
+        }
+    }
+    //functiile prietene
+    friend ostream& operator<<(ostream& ecran, const SalaDeSport& c);
+    friend istream& operator>>(istream& tastatura, SalaDeSport& c);
+
+    //supraincarcarea operatorului=
+    SalaDeSport& operator=(const SalaDeSport& other) {
+        if (this == &other) {
+            return *this; 
+        }
+
+        this->nume = other.nume;
+        this->nrAparate = other.nrAparate;
+
+        
+        if (this->numarSportivi != NULL) {
+            delete[] this->numarSportivi;
+            this->numarSportivi = NULL;
+        }
+        this->nrAparate = other.nrAparate;
+        if (other.numarSportivi != NULL) {
+            this->numarSportivi = new int[this->nrAparate];
+            for (int i = 0; i < this->nrAparate; i++) {
+                this->numarSportivi[i] = other.numarSportivi[i];
+            }
+        }
+
+        
+        return *this; 
+    }
+
+    friend istream& operator>>(istream& tastatura, SalaDeSport& sala) {
+        cout << "Introduceti numele salii de sport: ";
+        tastatura >> sala.nume;
+
+        cout << "Introduceti numarul de aparate: ";
+        tastatura >> sala.nrAparate;
+
+        if (sala.numarSportivi != nullptr) {
+            delete[] sala.numarSportivi;
+        }
+
+        sala.numarSportivi = new int[sala.nrAparate];
+
+        cout << "Introduceti numarul de sportivi pentru fiecare aparat: ";
+        for (int i = 0; i < sala.nrAparate; ++i) {
+            tastatura >> sala.numarSportivi[i];
+        }
+
+        return tastatura;
+    }
+
+    friend ostream& operator<<(ostream& ecran, const SalaDeSport& sala) {
+        ecran << "Numele salii de sport: " << sala.nume << endl;
+        ecran << "Numar aparate: " << sala.nrAparate << endl;
+        ecran << "Numar sportivi pentru fiecare aparat: ";
+        for (int i = 0; i < sala.nrAparate; ++i) {
+            ecran << sala.numarSportivi[i] << " ";
+        }
+        ecran << endl;
+
+        return ecran;
+    }
+    
+};
+//Functia prietena
+void afisareSalaDeSport(const SalaDeSport& sala) {
+    cout << "Afisare specifica pentru SalaDeSport:" << endl;
+    cout << "Id-ul salii este: " << sala.id << ". " << endl;
+    cout << "Sala se numeste: " << sala.nume << "." << endl;
+    cout << "Exista un numar de " << SalaDeSport::numarSaliDeSport << " sali de sport si " << sala.nrAparate << " aparate. ";
+
+    const int* sportivi = sala.numarSportivi;
+    if (sportivi != NULL) {
+        cout << "Sportivii sunt: ";
+        for (int i = 0; i < sala.nrAparate; i++) {
+            cout << sportivi[i] << ",";
+        }
+    }
+    else {
+        cout << "Incap maxim 10 sportivi";
+    }
+
+    cout << endl;
+    cout << "--------------------------------------------------------" << endl;
+}
+
+int SalaDeSport::numarSaliDeSport = 3;
+
+//CLASA A 3-A
+class BazinInot {
+private:
+    const int id;
+    string nume;
+    int numarCuloare;
+    int* dimensiuniBazin;
+    int poz;
+    static int nrBazine;
+    int numar; 
+public:
+   /* static int getDimensiuniBazin() {
+        return BazinInot::nrBazine;
+    }
+    static void setNrBazine(int numar) {
+        if (numar > 0) {
+            BazinInot::nrBazine = numar;
+        }
+    }*/
+
+    //Operatorul !
+    bool operator!() const {
+        
+        return dimensiuniBazin == NULL || poz == 0 || numarCuloare <= 0;
+    }
+    //CONSTRUCTOR 1
+    BazinInot() : id(9) {
+        this->nume = "Bazin Antrenament";
+        this->numarCuloare = 4;
+      
+       
+      
+    }
+    //CONSTRUCTOR 2
+    BazinInot(int idNou, string nume) : id(idNou) {
+        this->nume = "Bazin Olimpic";
+        this->numarCuloare = 5;
+        this->dimensiuniBazin = NULL;
+       
+    }
+
+    //CONSTRUCTOR 3
+    BazinInot(int id, string nume, int nrCuloare, int* dimensiuniBazin, int poz) : id(id) {
+        if (nrCuloare != 0) {
+            this->dimensiuniBazin = new int[poz];
+            for (int i = 0; i < poz; i++) {
+                this->dimensiuniBazin[i] = dimensiuniBazin[i];
+            }
+        }
+        else this->dimensiuniBazin = NULL;
+        this->numarCuloare = nrCuloare;
+        this->poz = poz;
+    }
+
+    //CONSTRUCTOR DE COPIERE
+    BazinInot(const BazinInot& other) : id(other.id) {
+        this->nume = other.nume;
+        this->numarCuloare = other.numarCuloare;
+        this->poz = other.poz;
+
+        if (other.dimensiuniBazin != NULL) {
+            this->dimensiuniBazin = new int[this->poz];
+            for (int i = 0; i < this->poz; i++) {
+                this->dimensiuniBazin[i] = other.dimensiuniBazin[i];
+            }
+        }
+        else {
+            this->dimensiuniBazin = NULL;
+        }
+    }
+
+    //DESTRUCTOR
+    ~BazinInot() {
+        if (this->dimensiuniBazin != NULL) {
+            delete[] this->dimensiuniBazin;
+        }
+    }
+
+    void afisare() {
+        cout << "--------------------------------------------------" << endl;
+        cout << "Bazinul are id-ul " << id << " si se numeste: " << nume << "." << endl;
+        cout << "Baza sportiva are un numar de " << BazinInot::nrBazine << " bazine cu un numar de culoare de " << numarCuloare << endl ;
+            cout << "Dimensiuni: ";
+        
+            for (int i = 0; i < poz; i++) 
+                cout << dimensiuniBazin[i] ;
+            
+      
+        cout << "----------------------------------------------------" << endl;
+    }
+
+ 
+    //GETTERI
+    const int getId()
+    {
+        return this->id;
+    }
+
+    const string getNume()
+    {
+        return this->nume;
+    }
+
+    const int getNumarCuloare()
+    {
+        return this->numarCuloare;
+    }
+
+    const int getPoz()
+    {
+        return this->poz;
+    }
+    static int getNrBazine()
+    {
+       return nrBazine;
+    }
+    const int getNr()
+    {
+        return this->nrBazine;
+    }
+
+    //SETTERI
+
+    void setNume(const string& nume) {
+        this->nume = nume;
+    }
+    
+    void setNumarCuloare(int numarCuloare) {
+        this->numarCuloare = numarCuloare;
+    }
+
+    void setDimensiuniBazin(const int* dimensiuniBazin, int poz) {
+        if (this->dimensiuniBazin != NULL) {
+            delete[] this->dimensiuniBazin;
+        }
+        this->poz = poz;
+        this->dimensiuniBazin = new int[poz];
+        for (int i = 0; i < poz; i++) {
+            this->dimensiuniBazin[i] = dimensiuniBazin[i];
+        }
+    }
+
+    static void setNrBazine(int numar) {
+        if (numar > 0) {
+            nrBazine = numar;
+        }
+    }
+    //functiile prieten
+    friend ostream& operator<<(ostream& ecran, const BazinInot& c);
+    friend istream& operator>>(istream& tastatura, BazinInot& c);
+
+    //supraincarcarea operatorului=
+    BazinInot& operator=(const BazinInot& other) {
+        if (this == &other) {
+            return *this;
+        }
+
+     
+        this->nume = other.nume;
+        this->numarCuloare = other.numarCuloare;
+
+        
+        if (this->dimensiuniBazin != NULL) {
+            delete[] this->dimensiuniBazin;
+            this->dimensiuniBazin = NULL;
+        }
+        this->poz = other.poz;
+        if (other.dimensiuniBazin != NULL) {
+            this->dimensiuniBazin = new int[this->poz];
+            for (int i = 0; i < this->poz; i++) {
+                this->dimensiuniBazin[i] = other.dimensiuniBazin[i];
+            }
+        }
+
+     return *this; 
+    }
+
+    friend istream& operator>>(istream& tastatura, BazinInot& bazin) {
+        cout << "Introduceti numele bazinului: ";
+        tastatura >> bazin.nume;
+
+        cout << "Introduceti numarul de culori: ";
+        tastatura >> bazin.numarCuloare;
+
+        if (bazin.dimensiuniBazin != nullptr) {
+            delete[] bazin.dimensiuniBazin;
+        }
+
+        cout << "Introduceti dimensiunile bazinului: ";
+        tastatura >> bazin.poz;
+
+        bazin.dimensiuniBazin = new int[bazin.poz];
+
+        for (int i = 0; i < bazin.poz; ++i) {
+            tastatura >> bazin.dimensiuniBazin[i];
+        }
+
+        return tastatura;
+    }
+
+    friend ostream& operator<<(ostream& ecran, const BazinInot& bazin) {
+        ecran << "Numele bazinului: " << bazin.nume << endl;
+        ecran << "Numar culori: " << bazin.numarCuloare << endl;
+        ecran << "Dimensiuni bazin: ";
+        for (int i = 0; i < bazin.poz; ++i) {
+            ecran << bazin.dimensiuniBazin[i] << " ";
+        }
+        ecran << endl;
+
+        return ecran;
+    }
+
+};
+int BazinInot::nrBazine = 2;
+
+class Vestiare {
+private:
+    const int id;
+    int capacitate;
+    float dimensiuniUsi;
+    int poz;
+    int* nrDusuri;
+
+
+public:
+    Vestiare() : id(90) {
+        this->capacitate = 20;
+        this->dimensiuniUsi = 2, 50;
+        this->poz = 0;
+        this->nrDusuri = NULL;
+    }
+
+    Vestiare(int id, int capacitate) : id(id) {
+        this->capacitate = capacitate;
+        this->dimensiuniUsi = dimensiuniUsi;
+        this->poz = 0;
+        this->nrDusuri = NULL;
+    }
+
+    Vestiare(int id, int capacitate, float dimensiuniUsi, int poz, int* nrDusuri) : id(id), capacitate(capacitate), dimensiuniUsi(dimensiuniUsi), poz(poz) {
+        if (poz != 0) {
+            this->nrDusuri = new int[poz];
+            for (int i = 0; i < poz; i++)
+            {
+                this->nrDusuri[i] = nrDusuri[i];
+            }
+        }
+        else this->nrDusuri = NULL;
+    }
+    Vestiare(const Vestiare& v) :id(v.id) {
+        capacitate = v.capacitate;
+        dimensiuniUsi = v.dimensiuniUsi;
+        poz = v.poz;
+        if (poz != 0) {
+            this->nrDusuri = new int[poz];
+            for (int i = 0; i < poz; i++)
+            {
+                this->nrDusuri[i] = nrDusuri[i];
+            }
+        }
+        else this->nrDusuri = NULL;
+    }
+    ~Vestiare() {
+        if (this->nrDusuri != NULL) {
+            delete[]this->nrDusuri;
+        }
+    }
+
+    const int getId() {
+        return this->id;
+    }
+
+    int getCapacitate() {
+        return capacitate;
+    }
+
+    float getDimensiuniUsi() {
+        return dimensiuniUsi;
+    }
+
+    int getPoz() {
+        return poz;
+    }
+
+    int* getNrDusuri() {
+        return nrDusuri;
+    }
+
+
+    void setCapacitate(int capacitate) {
+        capacitate = capacitate;
+    }
+
+    void setDimensiuniUsi(float dimensiuniUsi) {
+        dimensiuniUsi = dimensiuniUsi;
+    }
+
+    void setPoz(int poz) {
+        poz = poz;
+    }
+
+    friend istream& operator>>(istream& cin, Vestiare& vestiar) {
+        cin >> vestiar.capacitate >> vestiar.dimensiuniUsi >> vestiar.poz;
+        vestiar.nrDusuri = new int;
+        cin >> *(vestiar.nrDusuri);
+        return cin;
+    }
+
+
+    friend ostream& operator<<(ostream& cout, const Vestiare& vestiar) {
+        cout << "ID: " << vestiar.id << " Capacitate: " << vestiar.capacitate
+            << " Dimensiuni Usi: " << vestiar.dimensiuniUsi << " Pozitie: " << vestiar.poz
+            << " Numar dusuri: " << *(vestiar.nrDusuri);
+        return cout;
+    }
+
+
+    bool operator==(const Vestiare& v) const {
+        return (capacitate == v.capacitate &&
+            dimensiuniUsi == v.dimensiuniUsi &&
+            poz == v.poz &&
+            *nrDusuri == *(v.nrDusuri));
+    }
+
+
+};
+
+
+int main() {
+        Stadion c;
+        Stadion stadion1;
+        stadion1.afisare();
+        Stadion stadion2(101, "Camp Nou");
+        stadion2.afisare();
+    
+       Stadion stadion3(102, "Allianz Arena", 8, 800);
+        stadion3.afisare();
+    
+        Stadion stadion4 = stadion1;
+        if (!stadion1) {
+            cout << "Stadionul nu are nume sau nu are meciuri!" << endl;
+        }
+        else {
+            cout << "Stadionul are nume si meciuri!" << endl;
+        }
+    
+    
+        ////GETTERI SI SETTERI
+        cout << "Getter: " << endl;
+    
+        Stadion stadion5;
+        cout << "-----------------------------------------" << endl;
+        cout << "Stadionul are id-ul: " << stadion5.getId() << "si se numeste: " << stadion5.getNume() << ". Are " << stadion5.getIntrariStadion() << " intrare." << endl;
+        cout << "-----------------------------------------" << endl;
+       
+        cout << "Setter: " << endl;
+        Stadion stadion6;
+    
+    
+        //apel functii prietene
+        //ostream
+        Stadion stadion7;
+        cout << "Apel ostream: " << endl;
+        
+        //istream
+        Stadion stadion8;
+        cout << "Apel istream: " << endl;
+    
+        //operatorul =
+        stadion8 = stadion2;
+    
+        SalaDeSport saladesport1;
+        saladesport1.afisare();
+    
+        SalaDeSport sala1(101, "Fitness", 5, new int[5] {1, 2, 3, 4, 5});
+        afisareSalaDeSport(sala1);
+    
+        
+        SalaDeSport saladesport2(101, "Pilates", 5, new int[5] {1, 2 ,3, 4, 5});
+        saladesport2.afisare();
+        
+        SalaDeSport saladesport3(102, "YOGA", 2, new int[2] {1, 0});
+        saladesport3.afisare();
+    
+        SalaDeSport saladesport4 = saladesport1;
+        if (!saladesport1) {
+            cout << "Sala nu are sportivi sau aparate!" << endl;
+        }
+        else {
+            cout << "Sala are sportivi sau aparate!" << endl;
+        }
+    
+    
+        BazinInot bazininot1;
+        bazininot1.afisare();
+        BazinInot bazininot2(10, "Bazin Olimpic", 4, new int[3] {100, 200, 300}, 3);
+        bazininot2.afisare();
+    
+        BazinInot bazin1;
+    
+        if (!bazin1) {
+            cout << "Bazinul nu are dimensiuni sau are un numar negativ de culori!" << endl;
+        }
+        else {
+            cout << "Bazinul are dimensiuni si un numar pozitiv de culori!" << endl;
+        }
+        BazinInot bazininot3(11, "Bazin Copii" , 6, new int[2] {100, 200}, 2);
+        bazininot3.afisare();
+    
+        BazinInot bazininot4 = bazininot1;
+        
+        const int n = 3; 
+        const int m = 2;
+    
+        vector<Stadion> vectorStadioane(n);
+        vector<SalaDeSport> vectorSaliDeSport(n);
+        vector<BazinInot> vectorBazineInot(n);
+    
+        Stadion matriceStadioane[m][m];
+    
+        for (int i = 0; i < n; ++i) {
+            cout << "Introduceti datele pentru stadionul " << i + 1 << ":" << endl;
+            cin >> vectorStadioane[i];
+            cout << endl;
+    
+            cout << "Introduceti datele pentru sala de sport " << i + 1 << ":" << endl;
+            cin >> vectorSaliDeSport[i];
+            cout << endl;
+    
+            cout << "Introduceti datele pentru bazinul de inot " << i + 1 << ":" << endl;
+            cin >> vectorBazineInot[i];
+            cout << endl;
+        }for (int i = 0; i < m; ++i) {
+            for (int j = 0; j < m; ++j) {
+                cout << "Introduceti datele pentru stadionul de pe linia " << i + 1 << " si coloana " << j + 1 << ":" << endl;
+                cin >> matriceStadioane[i][j];
+                cout << endl;
+            }
+        }
+    
+        
+        cout << "Afisarea obiectelor din vectorul de stadioane:" << endl;
+        for (const auto& stadion : vectorStadioane) {
+            cout << stadion << endl;
+        }
+    
+        cout << "Afisarea obiectelor din vectorul de sali de sport:" << endl;
+        for (const auto& sala : vectorSaliDeSport) {
+            cout << sala << endl;
+        }
+    
+        cout << "Afisarea obiectelor din vectorul de bazine de inot:" << endl;
+        for (const auto& bazin : vectorBazineInot) {
+            cout << bazin << endl;
+        }
+    
+        
+        cout << "Afisarea obiectelor din matricea de stadioane:" << endl;
+        for (int i = 0; i < m; ++i) {
+            for (int j = 0; j < m; ++j) {
+                cout << matriceStadioane[i][j] << endl;
+            }
+        }
+    
+        return 0;
+    
+        Vestiare vestiar1;
+        cout << "Introduceti capacitate, dimensiuni usi, pozitie si numar dusuri pentru vestiar1:" << endl;
+        cin >> vestiar1;
+    
+        Vestiare vestiar2;
+        cout << "Introduceti capacitate, dimensiuni usi, pozitie si numar dusuri pentru vestiar2:" <<endl ;
+        cin >> vestiar2;
+    
+        
+        cout << "Vestiar1: " << vestiar1 << endl;
+        cout << "Vestiar2: " << vestiar2 << endl;
+    
+       
+        if (vestiar1 == vestiar2) {
+            cout << "Vestiarele sunt identice." << endl;
+        }
+        else {
+            cout << "Vestiarele nu sunt identice." << endl ;
+        }
+    
+        return 0;
+     
+Stadion stadion;
+cin >> stadion;
+ofstream g("Stadion.txt", ios::app);
+g << stadion;
+g.close();
+
+ifstream f("Stadion.txt", ios::in);
+f >> stadion;
+cout << stadion;      
+f >> stadion;
+cout << stadion;
+
+int valoareIntreaga = 20;
+char sir[50] = "Text salvat in fisier binar";
+
+SalaDeSport saladesport;
+cin >> saladesport;
+ofstream s("SalaDeSport.txt", ios::app);
+s << saladesport;
+s.close();
+
+BazinInot bazin;
+
+fstream citire("bazin.bin", ios::binary | ios::in);
+	citire.read((char*)&valoareIntreaga, sizeof(int));
+	int lungime;
+	citire.read((char*)&lungime, sizeof(int));
+	char* pSir = new char[lungime];
+	citire.read((char*)pSir, lungime);
+
+	citire.close();
+	cout << pSir << " " << valoareIntreaga << endl;
+
+	delete[]pSir;
+
+  Vestiare vestiar;
+    fstream citireVestiar("vestiar.bin", ios::binary | ios::in);
+    citireVestiar.read((char*)&valoareIntreaga, sizeof(int));
+    int latime;
+    citireVestiar.read((char*)&lungime, sizeof(int));
+    char* vSir = new char[latime];
+    citireVestiar.read((char*)vSir, latime);
+
+    citireVestiar.close();
+    cout << vSir << " " << valoareIntreaga << endl;
+
+    delete[]vSir;
+
+
+} 
+
